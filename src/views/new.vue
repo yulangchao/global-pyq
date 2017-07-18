@@ -21,11 +21,30 @@
                 :class="{'err':err=='content'}"
                 placeholder='回复支持Markdown语法,请注意标记代码'>
             </textarea>
+            <div style="margin-bottom: 20px">
+                <h2>选择图片</h2>
+                <a id='addPic' href="" v-on:click="addPic">添加图片 </a>
+                <input type="file" @change="onFileChange" multiple style="display: none;">
+            </div>
+            <div v-if="images.length >0">
+               <ul>
+                  <li class="img-review" v-for="(image,index) in images" :key="index">
+
+                     <img class="img-responsive" alt="" width="100" height="100" :src="image" @click='delImage(key)' />
+                     <a href="#" style="position: absolute;" @click='delImage(key)'>
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                  </li>
+               </ul>
+                <button @click="removeImage">移除全部图片</button>
+                <button @click='uploadImage' >上传</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import FileUpload from 'vue-upload-component';
     import $ from 'webpack-zepto';
     import nvHead from '../components/header.vue';
     import {
@@ -42,6 +61,7 @@
         },
         data() {
             return {
+                images: [],
                 topic: {
                     tab: 'share',
                     title: '',
@@ -57,6 +77,62 @@
             })
         },
         methods: {
+            addPic(e) {
+                console.log(e);
+                e.preventDefault();
+                $('input[type=file]').trigger('click');
+                return false;
+            },
+            onFileChange(e) {
+                console.log(e);
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length) return;
+                this.createImage(files);
+            },
+            createImage(file) {
+                if (typeof FileReader === 'undefined') {
+                    alert('您的浏览器不支持图片上传，请升级您的浏览器');
+                    return false;
+                }
+                var vm = this;
+                console.log(file);
+                var leng = file.length;
+                for (var i = 0; i < leng; i++) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file[i]);
+                    reader.onload = function(e) {
+                        vm.images.push(e.target.result);
+                        console.log(vm.images);
+                    };
+                }
+            },
+            delImage: function(index) {
+                this.images.shift(index);
+            },
+            removeImage: function(e) {
+                this.images = [];
+            },
+            uploadImage: function() {
+                console.log(this.images);
+                var object = {
+                    images: this.images
+                };
+                $.ajax({
+                    type: 'post',
+                    url: 'upload.php',
+                    data: object,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.status) {
+                            alert(data.msg);
+                            return false;
+                        } else {
+                            alert(data.msg);
+                            return false;
+                        }
+                    }
+                });
+            },
             addTopic() {
                 console.log(this.userInfo);
                 let title = $.trim(this.topic.title);
@@ -97,7 +173,8 @@
             }
         },
         components: {
-            nvHead
+            nvHead,
+            FileUpload
         }
     };
 </script>
@@ -146,6 +223,10 @@
         }
         .err {
             border: solid 1px red;
+        }
+        .img-review{
+            display: inline-block;
+            margin: 10px;
         }
     }
 </style>
