@@ -2,13 +2,13 @@
     <div class="login-page">
         <nv-head page-type="登录">
         </nv-head>
-        <section class="page-body">
+        <section class="page-body"  @keypress.enter.prevent="logon">
             <div class="label">
                 <input class="txt" type="text" placeholder="Username" v-model="token" maxlength="36">
-                <input class="txt" type="text" placeholder="Password" v-model="password" maxlength="36">
+                <input class="txt" type="password" placeholder="Password" v-model="password" maxlength="36">
             </div>
             <div class="label">
-                <a class="button" @click="logon">登录1</a>
+                <a class="button" @click="logon">登录</a>
             </div>
         </section>
     </div>
@@ -38,7 +38,7 @@
         },
         methods: {
             logon() {
-                if (this.token === '') {
+                if (this.token === '' || this.password === '') {
                     this.$alert('can not be empty!');
                     return false;
                 }
@@ -62,8 +62,8 @@
                         });
                     },
                     error: (res) => {
-                        var error = JSON.parse(res.responseText);
-                        this.$alert(error.error_msg);
+                        console.log(res.response);
+                        this.$alert(res.response.split('<pre>')[1].split('</pre>')[0]);
                     }
                 });
             }

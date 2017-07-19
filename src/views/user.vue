@@ -3,10 +3,10 @@
         <nv-head page-type="用户信息" :fix-head="true" :show-menu="false" :need-add="true" ></nv-head>
         <section class="userinfo">
             <img class="u-img" :src="user.avatar_url" /><br/>
-            <span class="u-name" v-text="user.loginname"></span>
+            <span class="u-name" v-text="user.local.name"></span>
             <div class="u-bottom">
                 <span class="u-time" v-text="getLastTimeStr(user.create_at, false)"></span>
-                <span class="u-score">积分：{{user.score}}</span>
+                <span class="u-score">积分：1</span>
             </div>
         </section>
         <section class="topics">
@@ -47,7 +47,7 @@
     export default {
         data() {
             return {
-                user: {},
+                user: JSON.parse(window.sessionStorage.getItem('user')),
                 currentData: [],
                 selectItem: 1
             };
@@ -82,14 +82,13 @@
                     });
                     return false;
                 }
-                $.get('https://cnodejs.org/api/v1/user/' + loginname, (d) => {
+                $.get('http://us.richardyych.cc/api/profile', (d) => {
                     if (d && d.data) {
                         let data = d.data;
-                        this.user = data;
                         if (data.recent_replies.length > 0) {
-                            this.currentData = data.recent_replies;
+                            this.currentData = data;
                         } else {
-                            this.currentData = data.recent_topics;
+                            this.currentData = data;
                             this.selectItem = 2;
                         }
                     }
