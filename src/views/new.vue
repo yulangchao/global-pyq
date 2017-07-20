@@ -26,11 +26,12 @@
                 <a id='addPic' href="" v-on:click="addPic">添加图片 </a>
                 <input type="file" @change="onFileChange" multiple style="display: none;">
             </div>
+            <canvas style="" id="myCanvas"></canvas>
             <div v-if="images.length >0">
                <ul>
-                  <li class="img-review" v-for="(image,index) in images" :key="index">
+                  <li class="img-review" v-for="(image,index) in smallimages" :key="index">
 
-                     <img class="img-responsive" alt="" width="100" height="100" :src="image" @click='delImage(key)' />
+                     <img class="img-responsive" alt="" width="150" height="150" :src="image" @click='delImage(key)' />
                      <a href="#" style="position: absolute;" @click='delImage(key)'>
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
@@ -62,13 +63,13 @@
         data() {
             return {
                 images: [],
+                smallimages: [],
                 topic: {
                     tab: 'share',
                     title: '',
                     content: ''
                 },
-                err: '',
-                authorTxt: '<br/><br/><a class="from" href="https://github.com/shinygang/Vue-cnodejs">I‘m webapp-cnodejs-vue</a>'
+                err: ''
             };
         },
         computed: {
@@ -77,6 +78,21 @@
             })
         },
         methods: {
+            myCanvas(imageData) {
+                var tempImage;
+                var canvas = document.getElementById('myCanvas');
+
+                var context = canvas.getContext('2d');
+                var img = new Image();
+                img.onload = () => {
+                    canvas.width = img.width / 2;
+                    canvas.height = img.height / 2;
+                    context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+                    tempImage = canvas.toDataURL('image/jpg', 0.1);
+                    this.smallimages.push(tempImage);
+                };
+                img.src = imageData;
+            },
             addPic(e) {
                 console.log(e);
                 e.preventDefault();
@@ -102,7 +118,8 @@
                     reader.readAsDataURL(file[i]);
                     reader.onload = function(e) {
                         vm.images.push(e.target.result);
-                        console.log(vm.images);
+                        vm.myCanvas(e.target.result);
+                        console.log(vm.smallimages);
                     };
                 }
             },
@@ -149,8 +166,9 @@
 
                 let postData = {
                     ...this.topic,
-                    content: this.topic.content + this.authorTxt,
-                    accesstoken: this.userInfo.token
+                    content: this.topic.content,
+                    userid: this.userInfo.token,
+                    images: JSON.stringify(this.images)
                 };
                 $.ajax({
                     type: 'POST',
