@@ -10,8 +10,8 @@
         <section id="page">
             <!-- 首页列表 -->
             <ul class="posts-list">
-                <li v-for="item in topics" :key="item.id">
-                    <router-link :to="{name:'topic',params:{id:item.id}}">
+                <li v-for="item in topics" :key="item._id">
+                    <router-link :to="{name:'topic',params:{id:item._id}}">
                     <h3 v-text="item.title"
                             :class="getTabInfo(item.tab, item.good, item.top, true)"
                             :title="getTabInfo(item.tab, item.good, item.top, false)">
@@ -23,18 +23,20 @@
                                 <span class="name">
                                     {{item.author.loginname}}
                                 </span>
-                                <span class="status" v-if="item.reply_count > 0">
-                                    <b>{{item.reply_count}}</b>
-                                    /{{item.visit_count}}
+                                <span class="status">
+                                   {{item.visit_count}}次浏览
                                 </span>
                             </p>
                             <p>
                                 <time>{{item.create_at | getLastTimeStr(true)}}</time>
-                                <time>{{item.last_reply_at | getLastTimeStr(true)}}</time>
                             </p>
                         </div>
                     </div>
                     </router-link>
+                    
+                      <div class="img-review" v-for="(image,index) in item.smallimages" :key="index">
+                         <img  data-toggle="modal" data-target="#myModal" class="img-responsive" alt="" width="88" height="88" :src="image" />
+                      </div>
                 </li>
             </ul>
         </section>
@@ -142,19 +144,20 @@
             // 获取主题数据
             getTopics() {
                 let params = $.param(this.searchKey);
-                $.get('https://cnodejs.org/api/v1/topics?' + params, (d) => {
+                $.get('http://us.richardyych.cc:1111/api/pyq?' + params, (d) => {
                     this.scroll = true;
-                    if (d && d.data) {
-                        d.data.forEach(this.mergeTopics);
+                    if (d) {
+                        $('body').css('background-image', 'none');
+                        d.forEach(this.mergeTopics);
                     }
                 });
             },
             mergeTopics(topic) {
-                if (typeof this.index[topic.id] === 'number') {
-                    const topicsIndex = this.index[topic.id];
+                if (typeof this.index[topic._id] === 'number') {
+                    const topicsIndex = this.index[topic._id];
                     this.topics[topicsIndex] = topic;
                 } else {
-                    this.index[topic.id] = this.topics.length;
+                    this.index[topic._id] = this.topics.length;
                     this.topics.push(topic);
                 }
             },
@@ -165,7 +168,7 @@
                     if ($(document).height() <= totalheight + 200) {
                         this.scroll = false;
                         this.searchKey.page += 1;
-                        this.getTopics();
+                        // this.getTopics();
                     }
                 }
             }
@@ -191,3 +194,12 @@
         }
     };
 </script>
+
+
+<style>
+.img-review{
+  display: inline-block;
+  margin: 4px;
+}
+
+</style>

@@ -55,18 +55,18 @@
                                         :class="{'uped':isUps(item.ups)}"
                                         @click="upReply(item)">&#xe608;</span>
                                     {{item.ups.length}}
-                                    <span class="iconfont icon" @click="addReply(item.id)">&#xe609;</span>
+                                    <span class="iconfont icon" @click="addReply(item._id)">&#xe609;</span>
                                 </span>
                             </div>
                         </section>
                         <div class="reply_content" v-html="item.content"></div>
                         <nv-reply :topic.sync="topic"
                                 :topic-id="topicId"
-                                :reply-id="item.id"
+                                :reply-id="item._id"
                                 :reply-to="item.author.loginname"
                                 :show.sync="curReplyId"
                                 @close="hideItemReply"
-                                v-if="userInfo.userId && curReplyId === item.id"></nv-reply>
+                                v-if="userInfo.userId && curReplyId === item._id"></nv-reply>
                     </li>
                 </ul>
             </section>
@@ -116,9 +116,9 @@
             this.topicId = this.$route.params.id;
 
             // 加载主题数据
-            $.get('https://cnodejs.org/api/v1/topic/' + this.topicId, (d) => {
-                if (d && d.data) {
-                    this.topic = d.data;
+            $.get('http://us.richardyych.cc:1111/api/pyq/' + this.topicId, (d) => {
+                if (d) {
+                    this.topic = d;
                 } else {
                     this.noData = true;
                 }
@@ -159,7 +159,7 @@
                 } else {
                     $.ajax({
                         type: 'POST',
-                        url: 'https://cnodejs.org/api/v1/reply/' + item.id + '/ups',
+                        url: 'https://cnodejs.org/api/v1/reply/' + item._id + '/ups',
                         data: {
                             accesstoken: this.userInfo.token
                         },

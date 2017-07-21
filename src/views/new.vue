@@ -17,28 +17,23 @@
                         type="text" :class="{'err':err=='title'}"
                         placeholder="标题，字数10字以上" max-length="100"/>
             </div>
-            <textarea v-model="topic.content" rows="35" class="add-content"
+            <textarea v-model="topic.content" rows="10" class="add-content"
                 :class="{'err':err=='content'}"
                 placeholder='回复支持Markdown语法,请注意标记代码'>
             </textarea>
             <div style="margin-bottom: 20px">
-                <h2>选择图片</h2>
-                <a id='addPic' href="" v-on:click="addPic">添加图片 </a>
+                <a class="btn" id='addPic' v-on:click="addPic"><h2 >选择图片</h2> </a>
                 <input type="file" @change="onFileChange" multiple style="display: none;">
             </div>
-            <canvas style="" id="myCanvas"></canvas>
+            <canvas style="display:none;" id="myCanvas"></canvas>
             <div v-if="images.length >0">
                <ul>
-                  <li class="img-review" v-for="(image,index) in smallimages" :key="index">
+                  <li class="img-review" v-for="(image,index) in images" :key="index">
 
                      <img class="img-responsive" alt="" width="150" height="150" :src="image" @click='delImage(key)' />
-                     <a href="#" style="position: absolute;" @click='delImage(key)'>
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </a>
                   </li>
                </ul>
                 <button @click="removeImage">移除全部图片</button>
-                <button @click='uploadImage' >上传</button>
             </div>
         </div>
     </div>
@@ -85,8 +80,8 @@
                 var context = canvas.getContext('2d');
                 var img = new Image();
                 img.onload = () => {
-                    canvas.width = img.width / 2;
-                    canvas.height = img.height / 2;
+                    canvas.width = img.width / 3;
+                    canvas.height = img.height / 3;
                     context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
                     tempImage = canvas.toDataURL('image/jpg', 0.1);
                     this.smallimages.push(tempImage);
@@ -125,9 +120,11 @@
             },
             delImage: function(index) {
                 this.images.shift(index);
+                this.smallimages.shift(index);
             },
             removeImage: function(e) {
                 this.images = [];
+                this.smallimages = [];
             },
             uploadImage: function() {
                 console.log(this.images);
@@ -163,28 +160,35 @@
                     this.err = 'content';
                     return false;
                 }
-
+                console.log(this.smallimages);
                 let postData = {
-                    ...this.topic,
-                    content: this.topic.content,
-                    userid: this.userInfo.token,
-                    images: JSON.stringify(this.images)
+                    author: {
+                        loginname: this.userInfo.loginname,
+                        avatar_url: this.userInfo.avatar_url
+                    },
+                    author_id: this.userInfo._id,
+                    content: contents,
+                    tab: this.topic.tab,
+                    title: title,
+                    visit_count: 0,
+                    top: false,
+                    good: true,
+                    smallimages: this.smallimages
                 };
                 $.ajax({
                     type: 'POST',
-                    url: 'https://cnodejs.org/api/v1/topics',
+                    url: 'http://us.richardyych.cc:1111/api/pyq',
                     data: postData,
                     dataType: 'json',
                     success: (res) => {
-                        if (res.success) {
+                        if (res) {
                             this.$router.push({
                                 name: 'list'
                             });
                         }
                     },
                     error: (res) => {
-                        let error = JSON.parse(res.responseText);
-                        this.$alert(error.error_msg);
+                        this.$alert('wrong');
                         return false;
                     }
                 });
