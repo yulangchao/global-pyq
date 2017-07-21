@@ -33,10 +33,20 @@
                         </div>
                     </div>
                     </router-link>
-                    
+
                       <div class="img-review" v-for="(image,index) in item.smallimages" :key="index">
-                         <img  data-toggle="modal" data-target="#myModal" class="img-responsive" alt="" width="88" height="88" :src="image" />
+                         <img  @click="show(index)" class="img-responsive" alt="" width="88" height="88" :src="image" />
+                            <div @click="clickall(index)" :id="['myModal' + index]" class="modal">
+
+                            <!-- Modal content -->
+                            <div class="modal-content">
+                                <span @click="close(index)" class="close">&times;</span>
+                                <img class="img-responsive" alt="" width="188" height="188" :src="image" />
+                            </div>
+
+                            </div>
                       </div>
+
                 </li>
             </ul>
         </section>
@@ -116,6 +126,19 @@
         },
         methods: {
             // 获取title文字
+            show(index) {
+                $('#myModal' + index).show();
+            },
+            close(index) {
+                $('#myModal' + index).hide();
+            },
+            clickall(e, index) {
+                console.log(e.target);
+                console.log($('#myModal' + index));
+                if (e.target === $('#myModal' + index)[0]) {
+                    $('#myModal' + index).hide();
+                }
+            },
             getTitleStr(tab) {
                 let str = '';
                 switch (tab) {
@@ -201,5 +224,42 @@
   display: inline-block;
   margin: 4px;
 }
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
 </style>

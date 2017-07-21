@@ -6,6 +6,9 @@ import routes from './routers';
 import Alert from './libs/alert';
 import store from './vuex/user';
 import FastClick from 'fastclick';
+import vmodal from 'vue-js-modal';
+
+Vue.use(vmodal);
 Vue.use(VueRouter);
 Vue.use(Alert);
 
