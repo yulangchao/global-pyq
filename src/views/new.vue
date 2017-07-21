@@ -22,8 +22,7 @@
                 placeholder='回复支持Markdown语法,请注意标记代码'>
             </textarea>
             <div style="margin-bottom: 20px">
-                <a class="btn" id='addPic' v-on:click="addPic"><h2 >选择图片</h2> </a>
-                <input type="file" @change="onFileChange" multiple style="display: none;">
+                <input type="file" v-ref:file id="addimage" @change="onFileChange" multiple>
             </div>
             <canvas style="display:none;" id="myCanvas"></canvas>
             <div v-if="images.length >0">
@@ -89,9 +88,9 @@
                 img.src = imageData;
             },
             addPic(e) {
-                console.log(e);
-                e.preventDefault();
-                $('input[type=file]').trigger('click');
+                this.$refs.file.click();
+                $('#addPic').text('123');
+                $('#addimage').click();
                 return false;
             },
             onFileChange(e) {
