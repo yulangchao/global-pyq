@@ -81,10 +81,15 @@
                 var context = canvas.getContext('2d');
                 var img = new Image();
                 img.onload = () => {
-                    while (size > 200000) {
-                        img.width /= 1.5;
-                        img.height /= 1.5;
-                        size /= 2.25;
+                    if (size > 900000) {
+                        canvas.width = img.width / 3;
+                        canvas.height = img.height / 3;
+                    } else if (size > 400000) {
+                        canvas.width = img.width / 2;
+                        canvas.height = img.height / 2;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
                     }
                     canvas.width = img.width;
                     canvas.height = img.height;
