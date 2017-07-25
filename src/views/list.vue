@@ -35,12 +35,12 @@
                     </router-link>
 
                       <div class="img-review" v-for="(image,index) in item.smallimages" :key="index">
-                         <img  @click="show(index)" class="img-responsive" alt="" width="88" height="88" :src="image" />
-                            <div @click="clickall(index)" :id="['myModal' + index]" class="modal">
+                         <img  @click="show(index, item._id)" class="img-responsive" alt="" width="88" height="88" :src="image" />
+                            <div @click="clickall(index, item._id, $event)" :id="['myModal-' + item._id + '-' + index]" class="modal">
 
                             <!-- Modal content -->
                             <div class="modal-content text-center">
-                                <span @click="close(index)" class="close">&times;</span>
+                                <span @click="close(index, item._id)" class="close">&times;</span>
                                 <img class="img-responsive modal-image" alt="" width="auto" height="auto" :src="image" />
                             </div>
 
@@ -126,17 +126,18 @@
         },
         methods: {
             // 获取title文字
-            show(index) {
-                $('#myModal' + index).show();
+            show(index, id) {
+                $('#myModal-' + id + '-' + index).show();
             },
-            close(index) {
-                $('#myModal' + index).hide();
+            close(index, id) {
+                $('#myModal-' + id + '-' + index).hide();
             },
-            clickall(e, index) {
-                console.log(e.target);
-                console.log($('#myModal' + index));
-                if (e.target === $('#myModal' + index)[0]) {
-                    $('#myModal' + index).hide();
+            clickall(index, id, e) {
+                console.log(e);
+                console.log(index);
+                console.log($('#myModal-' + id + '-' + index));
+                if (e.target === $('#myModal-' + id + '-' + index)[0]) {
+                    $('#myModal-' + id + '-' + index).hide();
                 }
             },
             getTitleStr(tab) {
@@ -245,7 +246,7 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 100%;
 }
 
 /* The Close Button */
@@ -262,4 +263,19 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.modal-image{
+    width:100%;
+}
+
+
+@media screen and (min-width: 768px) {
+        .modal-image{
+            width:50%;
+        }
+        .modal-content {
+            width: 60%;
+        }
+}
+
 </style>

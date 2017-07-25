@@ -22,7 +22,7 @@
                 placeholder='回复支持Markdown语法,请注意标记代码'>
             </textarea>
             <div style="margin-bottom: 20px">
-                <input type="file" v-ref:file id="addimage" @change="onFileChange" multiple>
+                <input type="file" ref:file id="addimage" @change="onFileChange" multiple>
             </div>
             <canvas style="display:none;" id="myCanvas"></canvas>
             <div v-if="images.length >0">
@@ -72,17 +72,25 @@
             })
         },
         methods: {
-            myCanvas(imageData) {
+            myCanvas(imageData, size) {
                 var tempImage;
                 var canvas = document.getElementById('myCanvas');
 
                 var context = canvas.getContext('2d');
                 var img = new Image();
                 img.onload = () => {
-                    canvas.width = img.width / 3;
-                    canvas.height = img.height / 3;
+                    if (size > 300000) {
+                        canvas.width = img.width / 3;
+                        canvas.height = img.height / 3;
+                    } else if (size > 200000) {
+                        canvas.width = img.width / 2;
+                        canvas.height = img.height / 2;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
                     context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-                    tempImage = canvas.toDataURL('image/jpg', 0.1);
+                    tempImage = canvas.toDataURL('image/jpg');
                     this.smallimages.push(tempImage);
                 };
                 img.src = imageData;
@@ -112,8 +120,7 @@
                     reader.readAsDataURL(file[i]);
                     reader.onload = function(e) {
                         vm.images.push(e.target.result);
-                        vm.myCanvas(e.target.result);
-                        console.log(vm.smallimages);
+                        vm.myCanvas(e.target.result, e.total);
                     };
                 }
             },
@@ -147,7 +154,6 @@
                 });
             },
             addTopic() {
-                console.log(this.userInfo);
                 let title = $.trim(this.topic.title);
                 let contents = $.trim(this.topic.content);
 
