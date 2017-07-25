@@ -39,9 +39,9 @@
                             <div @click="clickall(index)" :id="['myModal' + index]" class="modal">
 
                             <!-- Modal content -->
-                            <div class="modal-content">
+                            <div class="modal-content text-center">
                                 <span @click="close(index)" class="close">&times;</span>
-                                <img class="img-responsive" alt="" width="188" height="188" :src="image" />
+                                <img class="img-responsive modal-image" alt="" width="auto" height="auto" :src="image" />
                             </div>
 
                             </div>
