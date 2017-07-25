@@ -37,11 +37,22 @@
             };
         },
         methods: {
+            getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(this.showPosition);
+                } else {
+                    console.log('Geo not support');
+                }
+            },
+            showPosition (position) {
+                window.window.sessionStorage.location = [position.coords.longitude, position.coords.latitude];
+            },
             logon() {
                 if (this.token === '' || this.password === '') {
                     this.$alert('can not be empty!');
                     return false;
                 }
+                this.getLocation();
                 $.ajax({
                     type: 'POST',
                     url: 'http://us.richardyych.cc/api/auth/login',

@@ -73,7 +73,7 @@
                 index: {},
                 searchKey: {
                     page: 1,
-                    limit: 20,
+                    limit: 10,
                     tab: 'all',
                     mdrender: true
                 },
@@ -167,6 +167,10 @@
             },
             // 获取主题数据
             getTopics() {
+                let location = window.window.sessionStorage.location.split(',').map(function(item) {
+                    return parseFloat(item, 10);
+                });
+                this.searchKey.coords = location;
                 let params = $.param(this.searchKey);
                 $.get('http://us.richardyych.cc:1111/api/pyq?' + params, (d) => {
                     this.scroll = true;

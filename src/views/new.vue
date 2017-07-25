@@ -48,6 +48,7 @@
 
     export default {
         beforeMount() {
+            this.getLocation();
             if (!window.window.sessionStorage.getItem('user')) {
                 this.$router.push({
                     name: 'login'
@@ -63,7 +64,8 @@
                     title: '',
                     content: ''
                 },
-                err: ''
+                err: '',
+                coords: []
             };
         },
         computed: {
@@ -79,16 +81,13 @@
                 var context = canvas.getContext('2d');
                 var img = new Image();
                 img.onload = () => {
-                    if (size > 300000) {
-                        canvas.width = img.width / 3;
-                        canvas.height = img.height / 3;
-                    } else if (size > 200000) {
-                        canvas.width = img.width / 2;
-                        canvas.height = img.height / 2;
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+                    while (size > 200000) {
+                        img.width /= 1.5;
+                        img.height /= 1.5;
+                        size /= 2.25;
                     }
+                    canvas.width = img.width;
+                    canvas.height = img.height;
                     context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
                     tempImage = canvas.toDataURL('image/jpg');
                     this.smallimages.push(tempImage);
@@ -113,7 +112,6 @@
                     return false;
                 }
                 var vm = this;
-                console.log(file);
                 var leng = file.length;
                 for (var i = 0; i < leng; i++) {
                     var reader = new FileReader();
@@ -124,6 +122,16 @@
                     };
                 }
             },
+            getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(this.showPosition);
+                } else {
+                    console.log('Geo not support');
+                }
+            },
+            showPosition (position) {
+                this.coords = [position.coords.longitude, position.coords.latitude];
+            },
             delImage: function(index) {
                 this.images.shift(index);
                 this.smallimages.shift(index);
@@ -133,7 +141,6 @@
                 this.smallimages = [];
             },
             uploadImage: function() {
-                console.log(this.images);
                 var object = {
                     images: this.images
                 };
@@ -165,7 +172,7 @@
                     this.err = 'content';
                     return false;
                 }
-                console.log(this.smallimages);
+                console.log(this.coords);
                 let postData = {
                     author: {
                         loginname: this.userInfo.loginname,
@@ -178,7 +185,8 @@
                     visit_count: 0,
                     top: false,
                     good: true,
-                    smallimages: this.smallimages
+                    smallimages: this.smallimages,
+                    coords: this.coords
                 };
                 $.ajax({
                     type: 'POST',
