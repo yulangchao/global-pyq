@@ -1,36 +1,18 @@
-#基于vue.js重写Cnodejs.org社区的webapp [线上访问地址](http://shinygang.coding.me/)
-
-## 注意：当前项目代码已经升级到2.0，均采用vue-cli搭建的程序，非vue-cli的版本请看分支：not-vue-cli
- * master分支采用vue-cli构建的2.0版本。
- * ssr分支采用服务端渲染
- * 1.x代码请看1.x分支。
- * not-vue-cli则是没有采用vue-cli搭建的原始版本
-
--------
-如果你觉得该项目对你有帮助，就打赏作者一杯咖啡吧。
-![pic](https://segmentfault.com/img/bVqVEt)
-
+A social apps based on the project https://github.com/shinygang/Vue-cnodejs.git
+Backend is created by mongodb.
 ###安装
 
-项目地址：（`git clone`）
-
-```shell
-git clone https://github.com/shinygang/Vue-cnodejs.git
+git clone
 ```
-
-通过`npm`安装本地服务第三方依赖模块(需要已安装[Node.js](https://nodejs.org/))
-
 ```
 npm install
 ```
 
-启动服务(http://localhost:8020)
-
 ```
-npm run dev
+npm run dev  port 8020
 ```
 
-发布代码
+release the apps:
 ```
 npm run build
 ```
