@@ -77,6 +77,14 @@ const routers = [{
         });
     }
 }, {
+    path: '/register',
+    name: 'register',
+    component(resolve) {
+        require.ensure(['./views/register.vue'], () => {
+            resolve(require('./views/register.vue'));
+        });
+    }
+}, {
     path: '*',
     component: Home
 }];

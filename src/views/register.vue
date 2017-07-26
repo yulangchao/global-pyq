@@ -1,15 +1,22 @@
 <template>
-    <div class="login-page">
+    <div class="register-page">
         <nv-head page-type="登录">
         </nv-head>
-        <section class="page-body"  @keypress.enter.prevent="logon">
+        <section class="page-body"  @keypress.enter.prevent="register">
             <div class="label">
-                <input class="txt" type="text" placeholder="Username" v-model="token" maxlength="36">
-                <input class="txt" type="password" placeholder="Password" v-model="password" maxlength="36">
+                <input class="txt" type="text" placeholder="Username" v-model="token" maxlength="36" required>
+                <input class="txt" type="password" placeholder="Password" v-model="password" maxlength="36" required>
+                <input class="txt" type="password" placeholder="Password" v-model="passwordconfirm" maxlength="36" required>
+                <input class="txt" type="text" placeholder="Name" v-model="name" maxlength="36" required>
+                <input class="txt" type="text" placeholder="Email" v-model="email" maxlength="36" required>
+                <select class="add-tab" v-model="gender">
+                    <option value="-1" disabled selected>Select your Gender</option>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                </select>
             </div>
             <div class="label">
-                <a class="button" @click="register">register</a>
-                <a class="button" @click="logon">登录</a>
+                <a class="button" @click="register">Register</a>
             </div>
         </section>
     </div>
@@ -21,65 +28,46 @@
 
     export default {
         mounted() {
-            if (!window.window.sessionStorage.getItem('user')) {
-                this.$router.push({
-                    name: 'login'
-                });
-            } else {
-                this.$router.push({
-                    name: 'list'
-                });
-            }
+
         },
         data() {
             return {
                 token: '',
-                password: ''
+                password: '',
+                passwordconfirm: '',
+                email: '',
+                name: '',
+                gender: -1
             };
         },
         methods: {
-            getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(this.showPosition);
-                } else {
-                    console.log('Geo not support');
-                }
-            },
-            showPosition (position) {
-                window.window.sessionStorage.location = [position.coords.longitude, position.coords.latitude];
-            },
             register() {
-                this.$router.push({
-                    path: 'register'
-                });
-            },
-            logon() {
                 if (this.token === '' || this.password === '') {
                     this.$alert('can not be empty!');
                     return false;
+                } else if (this.password !== this.passwordconfirm) {
+                    this.$alert('Passwords are not matched!');
+                    return false;
                 }
-                this.getLocation();
+
                 $.ajax({
                     type: 'POST',
-                    url: 'http://us.richardyych.cc:1111/api/auth/login',
+                    url: 'http://us.richardyych.cc:1111/api/auth/signup',
                     data: {
                         username: this.token,
-                        password: this.password
+                        password: this.password,
+                        email: this.email,
+                        name: this.name,
+                        gender: this.gender,
+                        avatar_url: 'https://s-media-cache-ak0.pinimg.com/originals/c5/7e/a0/c57ea04f0b2cbdeab1d94a1d0352dfbc.jpg'
                     },
                     dataType: 'json',
                     success: (res) => {
-                        delete res['local']['password'];
-                        res.loginname = res.local.name;
-                        res.avatar_url = res.local.avatar_url;
-                        window.window.sessionStorage.user = JSON.stringify(res);
-                        this.$store.dispatch('setUserInfo', res);
-                        let redirect = decodeURIComponent(this.$route.query.redirect || '/');
                         this.$router.push({
-                            path: redirect
+                            path: 'login'
                         });
                     },
                     error: (res) => {
-                        console.log(res.response);
                         this.$alert(res.response.split('<pre>')[1].split('</pre>')[0]);
                     }
                 });
@@ -106,6 +94,15 @@
                 padding: 12px 0;
                 border: none;
                 border-bottom: 1px solid #4fc08d;
+                background-color: transparent;
+                width: 100%;
+                font-size: 14px;
+                color: #313131;
+            }
+            .add-tab {
+                margin: 10px 0;
+                padding: 12px 0;
+                border: 1px solid #4fc08d;
                 background-color: transparent;
                 width: 100%;
                 font-size: 14px;
