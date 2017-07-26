@@ -8,8 +8,8 @@
                 <input class="txt" type="password" placeholder="Password" v-model="password" maxlength="36">
             </div>
             <div class="label">
-                <a class="button" @click="register">register</a>
-                <a class="button" @click="logon">登录</a>
+                <a class="button" @click="logon">Login</a>
+                <a class="button register" @click="register">register</a>
             </div>
         </section>
     </div>
@@ -133,6 +133,9 @@
                 width: 48%;
                 outline: medium none;
                 opacity: 0;
+            }
+            .register{
+                margin-top:30px;
             }
         }
     }
